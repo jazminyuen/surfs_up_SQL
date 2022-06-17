@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, func
 
 from flask import Flask, jsonify
 
-# Set up the database
+## Set up the database
 # Access the SQLite database
 engine = create_engine("sqlite:///hawaii.sqlite")
 # Reflect the database into our classes
@@ -24,11 +24,10 @@ session = Session(engine)
 # Set up Flask
 app = Flask(__name__)
 
-# Set up Flask routes
+## Set up Flask routes
 # Create the welcome route
 @app.route("/")
 
-# Create routing info for each of the other routes
 def welcome():
     return(
     '''
@@ -39,3 +38,13 @@ def welcome():
     /api/v1.0/tobs
     /api/v1.0/temp/start/end
     ''')
+
+# Create precipitation route
+@app.route("/api/v1.0/precipitation")
+
+def precipitation():
+   prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
+   precipitation = session.query(Measurement.date, Measurement.prcp).\
+      filter(Measurement.date >= prev_year).all()
+   precip = {date: prcp for date, prcp in precipitation}
+   return jsonify(precip)
